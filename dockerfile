@@ -1,4 +1,7 @@
 FROM golang:onbuild
-LABEL version="1.0.0" description="Disponibilizando api go" maintainer="Mariana vettorazzo<marianavettorazzo@gmail.com>"
+WORKDIR /src
+COPY . .
+RUN yarn install --production
+CMD ["golang", "/src/main.go"]
 EXPOSE 8080
 
