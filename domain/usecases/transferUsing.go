@@ -17,43 +17,49 @@ func IDGeneratorTransaction() int { // Transfer entity function that generates t
 	value := rand.Intn(50)
 	return value
 }
-func CaptureId(id int) bool {
+func CaptureId(id int) (string, bool) {
+	var ret string
 	for i := 0; i < len(DataAcc); i++ {
 		if DataAcc[i].ID == id {
-			return true
+			ret = "Sucess"
+			return ret, true
 		}
 	}
-	return false
+	ret = "invalid id"
+	return ret, false
 }
 
 func Validator(balance float64, Amount float64) (string, bool) {
 	var response string
 	switch {
 	case balance < Amount:
-		response = "Sem saldo suficiente para transação"
+		response = "Not enough balance for transaction"
 		return response, false
 	case Amount < 0:
-		response = "Valor de transferencia inválido"
+		response = "Invalid transfer value"
 		return response, false
 	case Amount == 0:
-		response = "Valor de transferencia inválido"
+		response = "Invalid transfer value"
 		return response, false
 	default:
-		response = "Sucesso"
+		response = "Sucess"
 		return response, true
 	}
 
 }
 func Transaction(ori int, dest int, Amount float64) (string, bool) {
-	ret := "Sucesso"
-	if !CaptureId(ori) {
-		return ret, false
+	msg := "Sucess"
+	str, ret := CaptureId(ori)
+	if !ret {
+		return str, false
 	}
-	if !CaptureId(dest) {
-		return ret, false
+	str, result := CaptureId(dest)
+	if !result {
+		return str, false
 	}
 	if ori == dest {
-		return ret, false
+		msg = "The ids must be different"
+		return msg, false
 	}
 
 	for i := 0; i < len(DataAcc); i++ {
@@ -69,7 +75,7 @@ func Transaction(ori int, dest int, Amount float64) (string, bool) {
 
 		}
 	}
-	return ret, true
+	return msg, true
 }
 
 func TransferringUnique(d domain.Transfer) (string, bool) { // rota deve ser put

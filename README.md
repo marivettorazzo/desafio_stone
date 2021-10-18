@@ -40,7 +40,7 @@ Crie duas contas para testar outras rotas.
 Inserindo os dados da conta a ser criada ex:
 * Status code: 200
 * Content-Type: application/json
-* Body
+* Body 
 ```
 {
     "Name": "string",
@@ -49,17 +49,31 @@ Inserindo os dados da conta a ser criada ex:
     "Secret" : "string"
 }
 ```
+Essa Rota tem os seguintes retornos.
+
+Caso o CPF inserido já exista :
+
+```
+"Fill in a valid CPF"
+```
+Caso p CPF contenha menos de 11 dígitos:
+```
+"Fill in a valid CPF"
+```
+
 A rota para ver as contas existentes.
+  * Status code: 200
   * /accounts com o método Get.
 
 A Rota para ver o valor do saldo existente em uma conta especifica passando ID como paramêtro.
+  * Status code: 200
   * /accounts/id/balance
 
 A rota para realizar uma transferência.
   * /transfer com o metodo Post.
   * Status code: 200
   * Content-Type: application/json
-  * Body
+  * Body : 
 ```
 {
     "Amount" : float,
@@ -69,24 +83,36 @@ A rota para realizar uma transferência.
 ```
 Essa Rota tem os seguintes retornos.
 
-Caso o saldo da conta seja menor do que o valor
-transferido:
+Caso o saldo da conta seja menor do que o valor transferido:
 ```
-"Insufficient balance of source account"
+"Not enough balance for transaction"
+```
+Caso o valor a ser transferido seja menor ou igual 0:
+
+```
+"Invalid transfer value"
 ```
 Caso o id inserido no corpo da requisição não exista:
 ```
-"id does not exist"
+"invalid id"
+```
+Caso os ids de origem e destino sejam iguais:
+```
+"the ids must be different"
 ```
 Caso todas as informações sejam válidas : 
 ```
-"Transaction performed successfully"
+"Sucess"
 ```
-A rota mostrar todas transações realizadas com sucesso.
+A rota mostra todas transações realizadas com sucesso.
+  * Status code: 200
   * /transfer com o metodo Get.
 
 A rota para validação de login deve se inserir as seguintes informações :
   * /login
+  * Status code: 200
+  * Content-Type: application/json
+  * Body : 
 ```
 {
     "Cpf" : int,
@@ -106,11 +132,11 @@ O comando utilizado para rodar o servidor e utilizar as rotas:
 no terminal. ( *atalho ctrl+j* )
   * Navegue até o diretório da aplicação utilizando o seguinte comando:
 ```
-cd src
+cd main
 ```
 Ainda no terminal execute:
 ```
-go run
+go run main.go
 ```
 
 Execute o comando:
