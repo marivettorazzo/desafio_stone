@@ -1,11 +1,11 @@
-package controllers
+package usecases
 
 import (
 	"errors"
 	"math/rand"
 	"time"
 
-	"exemple.com/DesafioStone/src/model"
+	"exemple.com/DesafioStone/desafio_stone/domain"
 )
 
 func IDGeneratorAcc() int { //account type method that generates a non-repeating id
@@ -13,10 +13,10 @@ func IDGeneratorAcc() int { //account type method that generates a non-repeating
 	value := rand.Intn(10000)
 	return value
 }
-func InsertLieDatabase(d model.Account) (model.Account, error) { //function that enters account data in the "Database"
-	var a model.Account
+func InsertLieDatabase(d domain.Account) (domain.Account, error) { //function that enters account data in the "Database"
+	var a domain.Account
 	a.Create_at = time.Now()
-	accountUnique := model.Account{
+	accountUnique := domain.Account{
 		ID:        IDGeneratorAcc(),
 		Name:      d.Name,
 		Cpf:       d.Cpf,

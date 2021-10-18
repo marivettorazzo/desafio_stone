@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Login struct {
 	Cpf    int    `json:"Cpf,omitempty"`

@@ -1,12 +1,12 @@
-package controllers
+package usecases
 
 import (
-	"exemple.com/DesafioStone/src/model"
+	"exemple.com/DesafioStone/desafio_stone/domain"
 )
 
-var DataLogin []model.Login
+var DataLogin []domain.Login
 
-func ValidaLogin(l model.Login) string {
+func ValidaLogin(l domain.Login) string {
 	for i := 0; i < len(DataLogin); i++ {
 
 		if DataLogin[i].Cpf == l.Cpf && DataLogin[i].Secret == PasswordGenerator(l.Secret) {
@@ -21,7 +21,7 @@ func ValidaLogin(l model.Login) string {
 }
 func insertLogin(cpf int, secret string) {
 
-	x := model.Login{
+	x := domain.Login{
 		Cpf:    cpf,
 		Secret: secret,
 	}

@@ -1,10 +1,10 @@
-package controllers
+package usecases
 
 import (
 	"crypto/sha256"
 	"fmt"
 
-	"exemple.com/DesafioStone/src/model"
+	"exemple.com/DesafioStone/desafio_stone/domain"
 )
 
 func AsSha256(o interface{}) string { //hash generator function
@@ -14,7 +14,7 @@ func AsSha256(o interface{}) string { //hash generator function
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 func PasswordGenerator(s string) string { //class method that changes password to hash
-	var k model.KeySecret
+	var k domain.KeySecret
 	k.Key = AsSha256(s)
 	return k.Key
 }
