@@ -47,6 +47,9 @@ func Transaction(ori int, dest int, Amount float64) bool {
 	if !CaptureId(dest) {
 		return false
 	}
+	if ori == dest {
+		return false
+	}
 	for i := 0; i < len(DataAcc); i++ {
 		if DataAcc[i].ID == ori {
 			if !Validator(DataAcc[i].Balance, Amount) {
