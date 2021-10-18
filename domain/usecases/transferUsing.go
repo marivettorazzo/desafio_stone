@@ -26,45 +26,53 @@ func CaptureId(id int) bool {
 	return false
 }
 
-func Validator(balance float64, Amount float64) bool {
-
+func Validator(balance float64, Amount float64) (string, bool) {
+	var response string
 	switch {
 	case balance < Amount:
-		return false
+		response = "Sem saldo suficiente para transação"
+		return response, false
 	case Amount < 0:
-		return false
+		response = "Valor de transferencia inválido"
+		return response, false
 	case Amount == 0:
-		return false
+		response = "Valor de transferencia inválido"
+		return response, false
 	default:
-		return true
+		response = "Sucesso"
+		return response, true
 	}
 
 }
-func Transaction(ori int, dest int, Amount float64) bool {
+func Transaction(ori int, dest int, Amount float64) (string, bool) {
+	ret := "Sucesso"
 	if !CaptureId(ori) {
-		return false
+		return ret, false
 	}
 	if !CaptureId(dest) {
-		return false
+		return ret, false
 	}
 	if ori == dest {
-		return false
+		return ret, false
 	}
+
 	for i := 0; i < len(DataAcc); i++ {
+		str, resp := Validator(DataAcc[i].Balance, Amount)
 		if DataAcc[i].ID == ori {
-			if !Validator(DataAcc[i].Balance, Amount) {
-				return false
+			if !resp {
+				return str, false
 			}
 			DataAcc[i].Balance -= Amount
 		}
 		if DataAcc[i].ID == dest {
 			DataAcc[i].Balance += Amount
+
 		}
 	}
-	return true
+	return ret, true
 }
 
-func TransferringUnique(d domain.Transfer) bool { // rota deve ser put
+func TransferringUnique(d domain.Transfer) (string, bool) { // rota deve ser put
 
 	Transf := domain.Transfer{
 		ID:                     IDGeneratorTransaction(),
@@ -73,6 +81,8 @@ func TransferringUnique(d domain.Transfer) bool { // rota deve ser put
 		Account_destination_id: d.Account_destination_id,
 		Created_at_:            time.Now(),
 	}
-	return Transaction(Transf.Account_origin_id, Transf.Account_destination_id, Transf.Amount)
+
+	str, ret := Transaction(Transf.Account_origin_id, Transf.Account_destination_id, Transf.Amount)
+	return str, ret
 
 }

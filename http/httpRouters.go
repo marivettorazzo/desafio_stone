@@ -41,14 +41,14 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) { //route that create
 	var cria domain.Account
 	json.NewDecoder(r.Body).Decode(&cria)
 
-	resp := usecases.InsertLieDatabase(cria)
+	str, resp := usecases.InsertLieDatabase(cria)
 	if !resp {
-		response := "Bad request"
+
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(response)
+		json.NewEncoder(w).Encode(str)
 		return
 	}
-
+	json.NewEncoder(w).Encode(str)
 	w.WriteHeader(http.StatusOK)
 
 }
@@ -66,14 +66,14 @@ func TransferRoute(w http.ResponseWriter, r *http.Request) { //route that perfor
 	var b domain.Transfer
 
 	json.NewDecoder(r.Body).Decode(&b)
-	result := usecases.TransferringUnique(b)
+	str, result := usecases.TransferringUnique(b)
 	if !result {
-		response := "Bad request"
+		response := str
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	response := " 200 OK"
+	response := str
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 
