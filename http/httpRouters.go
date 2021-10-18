@@ -24,10 +24,14 @@ func showAccountsBalance(w http.ResponseWriter, r *http.Request) { //function th
 		id := strconv.Itoa(item.ID)
 		if id == params["account_id"] { //makes a range traversing the dataset passed in the slice comparing if item is equal id passed in route
 
+			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(item.Balance)
 
 			return
 		}
+		response := "Not found"
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(response)
 	}
 
 }
@@ -37,16 +41,20 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) { //route that create
 	var cria domain.Account
 	json.NewDecoder(r.Body).Decode(&cria)
 
-	x, err := usecases.InsertLieDatabase(cria)
-	if err != nil {
-		err := "400 Bad Request"
-		json.NewEncoder(w).Encode(err)
+	resp := usecases.InsertLieDatabase(cria)
+	if !resp {
+		response := "Bad request"
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(response)
+		return
 	}
-	json.NewEncoder(w).Encode(x)
+
+	w.WriteHeader(http.StatusOK)
+
 }
 
 func showAccounts(w http.ResponseWriter, r *http.Request) { //shows all registered accounts
-	//turns information into json
+	w.Header().Set("Content-Type", "aplication/json")
 
 	json.NewEncoder(w).Encode(usecases.DataAcc)
 
@@ -59,10 +67,18 @@ func TransferRoute(w http.ResponseWriter, r *http.Request) { //route that perfor
 
 	json.NewDecoder(r.Body).Decode(&b)
 	result := usecases.TransferringUnique(b)
-
-	json.NewEncoder(w).Encode(result)
+	if !result {
+		response := "Bad request"
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	response := " 200 OK"
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 
 }
+
 func GetTransfers(w http.ResponseWriter, r *http.Request) { //route showing all transactions performed
 
 	json.NewEncoder(w).Encode(usecases.DataTran)
@@ -70,7 +86,7 @@ func GetTransfers(w http.ResponseWriter, r *http.Request) { //route showing all 
 
 //route login
 func Login(w http.ResponseWriter, r *http.Request) { //login validation route
-
+	w.Header().Set("Content-Type", "aplication/json")
 	var l domain.Login
 	json.NewDecoder(r.Body).Decode(&l)
 	result := usecases.ValidaLogin(l)
