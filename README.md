@@ -17,12 +17,12 @@ github.com/mitchellh/hashstructure v1.1.0
   * Criar uma conta 
 
 - Rotas: (get) localhost:3000/transfer
-  * Mostra todas as transações 
+  * Para mostrar todas as transações 
 
 - Rotas: (Post) localhost:3000/transfer
   * Realiza uma transação se:
-    * Os IDS das contas de origem e de destino existirem.
-    * O saldo da conta de origem seja maior que o valor transferido. 
+    * Os IDS das contas de origem e de destino existirem & forem diferentes.
+    * O saldo da conta de origem seja maior que o valor transferido e o valor transferido seja um valor válido. 
 
 - Rotas: (Post) localhost:3000/login
   * Valida a senha e o cpf do usuário. 
@@ -34,8 +34,8 @@ Foi ultizado o aplicativo Postman para acessos as funcionalidades das rotas.
 
 A primeira rota a ser utilizada deve ser
   * /accounts  como o método Post 
+  * Content-Type: application/json
 
-Crie duas contas para testar outras rotas.
 
 Inserindo os dados da conta a ser criada ex:
 * Status code: 200
@@ -54,19 +54,25 @@ Essa Rota tem os seguintes retornos.
 Caso o CPF inserido já exista :
 
 ```
-"Fill in a valid CPF"
+"invalid cpf"
 ```
-Caso p CPF contenha menos de 11 dígitos:
+Caso  o CPF contenha menos de 11 dígitos:
 ```
-"Fill in a valid CPF"
+"invalid cpf"
+```
+Caso  o nome esteja com zero caracteres:
+```
+"invalid name"
 ```
 
 A rota para ver as contas existentes.
   * Status code: 200
+  * Content-Type: application/json
   * /accounts com o método Get.
 
 A Rota para ver o valor do saldo existente em uma conta especifica passando ID como paramêtro.
   * Status code: 200
+  * Content-Type: application/json
   * /accounts/id/balance
 
 A rota para realizar uma transferência.
@@ -102,10 +108,11 @@ Caso os ids de origem e destino sejam iguais:
 ```
 Caso todas as informações sejam válidas : 
 ```
-"Sucess"
+"Success"
 ```
 A rota mostra todas transações realizadas com sucesso.
   * Status code: 200
+  * Content-Type: application/json
   * /transfer com o metodo Get.
 
 A rota para validação de login deve se inserir as seguintes informações :
@@ -124,9 +131,16 @@ Caso as informações não sejam identicas as que foram salvas no "banco".
 ```
 "Access denied"
 ```
-Caso as informações sejam identicas as que foram salvas no "banco".
+Caso as informações sejam identicas as que foram salvas no "banco" ele traz as informações da conta inserida. 
 ```
-"Access allowed"
+{
+    "ID": 1680,
+    "Name": "Mariana",
+    "Cpf": 25288855251,
+    "Balance": 1000,
+    "Secret": "f065e062a06bf53438210057971560e4a499826a08b083d0ab9a47089dcd08a6",
+    "create_at": "2021-10-26T11:32:28.6445063-03:00"
+}
 ```
 O comando utilizado para rodar o servidor e utilizar as rotas:
 no terminal. ( *atalho ctrl+j* )
@@ -139,14 +153,15 @@ Ainda no terminal execute:
 go run main.go
 ```
 
-Execute o comando:
+Executando comando para testes unitários:
 ```
 go test
 ```
 Resultados dos testes feitos até o momento:
 ```
+$ go test
 PASS
-ok      exemple.com/DesafioStone/src    0.157s
+ok      exemple.com/DesafioStone/desafio_stone/domain/usecases  0.068s
 ```
 
 
