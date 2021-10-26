@@ -12,7 +12,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func testeRoute(w http.ResponseWriter, r *http.Request) { //returns the port the server is running on
+func testeRoute(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "aplication/json") //returns the port the server is running on
 	fmt.Fprintf(w, "Server running on port 3000")
 }
 
@@ -29,7 +30,7 @@ func showAccountsBalance(w http.ResponseWriter, r *http.Request) { //function th
 
 			return
 		}
-		response := "Not found"
+		response := " 404 Not found"
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(response)
 	}
@@ -41,23 +42,29 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) { //route that create
 	var cria domain.Account
 	json.NewDecoder(r.Body).Decode(&cria)
 
-	str, resp := usecases.InsertLieDatabase(cria)
-	if !resp {
+	resp := usecases.InsertLieDatabase(cria)
+	if resp != nil {
 
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(str)
+		json.NewEncoder(w).Encode(resp.Error())
 		return
 	}
-	json.NewEncoder(w).Encode(str)
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode("success")
 
 }
 
 func showAccounts(w http.ResponseWriter, r *http.Request) { //shows all registered accounts
 	w.Header().Set("Content-Type", "aplication/json")
 
+	x := usecases.Accounts()
+	if x != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(x.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(usecases.DataAcc)
-
 }
 
 // routes Transfer
@@ -66,21 +73,29 @@ func TransferRoute(w http.ResponseWriter, r *http.Request) { //route that perfor
 	var b domain.Transfer
 
 	json.NewDecoder(r.Body).Decode(&b)
-	str, result := usecases.TransferringUnique(b)
-	if !result {
-		response := str
+	result := usecases.TransferringUnique(b)
+
+	if result != nil {
+
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(response)
+		json.NewEncoder(w).Encode(result.Error())
 		return
 	}
-	response := str
+
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode("Success")
 
 }
 
 func GetTransfers(w http.ResponseWriter, r *http.Request) { //route showing all transactions performed
-
+	w.Header().Set("Content-type", "aplication/json")
+	x := usecases.Transfers()
+	if x != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(x.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(usecases.DataTran)
 }
 
@@ -89,8 +104,15 @@ func Login(w http.ResponseWriter, r *http.Request) { //login validation route
 	w.Header().Set("Content-Type", "aplication/json")
 	var l domain.Login
 	json.NewDecoder(r.Body).Decode(&l)
-	result := usecases.ValidaLogin(l)
-	json.NewEncoder(w).Encode(result)
+	str, result := usecases.ValidaLogin(l)
+	if result != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(result.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(str)
 
 }
 
@@ -104,7 +126,7 @@ func ConfiguringServer() {
 	router.HandleFunc("/transfer", TransferRoute).Methods("Post")
 	router.HandleFunc("/transfer", GetTransfers).Methods("GET")
 	// Route Login
-	router.HandleFunc("/login", Login).Methods("Post")
+	router.HandleFunc("/login", Login).Methods("Get")
 
 	log.Fatal(http.ListenAndServe(":3000", router)) //DefaultServerMux localhost : 3000 , receives the port and the route of ok as stated above
 }

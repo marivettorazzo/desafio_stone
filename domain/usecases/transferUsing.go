@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"errors"
 	"math/rand"
 	"time"
 
@@ -8,7 +9,6 @@ import (
 )
 
 var (
-	DataAcc  []domain.Account
 	DataTran []domain.Transfer
 )
 
@@ -17,56 +17,57 @@ func IDGeneratorTransaction() int { // Transfer entity function that generates t
 	value := rand.Intn(50)
 	return value
 }
-func CaptureId(id int) (string, bool) {
-	var ret string
+func CaptureId(id int) error {
+
 	for i := 0; i < len(DataAcc); i++ {
 		if DataAcc[i].ID == id {
-			ret = "Sucess"
-			return ret, true
+
+			return nil
 		}
 	}
-	ret = "invalid id"
-	return ret, false
+
+	return errors.New("invalid id")
 }
 
-func Validator(balance float64, Amount float64) (string, bool) {
-	var response string
+func Validator(balance float64, Amount float64) error {
+
 	switch {
 	case balance < Amount:
-		response = "Not enough balance for transaction"
-		return response, false
+
+		return errors.New("not enough balance for transaction")
 	case Amount < 0:
-		response = "Invalid transfer value"
-		return response, false
+
+		return errors.New("invalid transfer value")
+
 	case Amount == 0:
-		response = "Invalid transfer value"
-		return response, false
+
+		return errors.New("invalid transfer value")
 	default:
-		response = "Sucess"
-		return response, true
+
+		return nil
 	}
 
 }
-func Transaction(ori int, dest int, Amount float64) (string, bool) {
-	msg := "Sucess"
-	str, ret := CaptureId(ori)
-	if !ret {
-		return str, false
+func Transaction(ori int, dest int, Amount float64) error {
+	var ret error
+	ret = CaptureId(ori)
+	if ret != nil {
+		return errors.New("invalid id")
 	}
-	str, result := CaptureId(dest)
-	if !result {
-		return str, false
+	ret = CaptureId(dest)
+	if ret != nil {
+		return errors.New("invalid id")
 	}
 	if ori == dest {
-		msg = "The ids must be different"
-		return msg, false
+
+		return errors.New("the ids must be different")
 	}
 
 	for i := 0; i < len(DataAcc); i++ {
-		str, resp := Validator(DataAcc[i].Balance, Amount)
 		if DataAcc[i].ID == ori {
-			if !resp {
-				return str, false
+			resp := Validator(DataAcc[i].Balance, Amount)
+			if resp != nil {
+				return resp
 			}
 			DataAcc[i].Balance -= Amount
 		}
@@ -75,10 +76,10 @@ func Transaction(ori int, dest int, Amount float64) (string, bool) {
 
 		}
 	}
-	return msg, true
+	return nil
 }
 
-func TransferringUnique(d domain.Transfer) (string, bool) { // rota deve ser put
+func TransferringUnique(d domain.Transfer) error { // rota deve ser put
 
 	Transf := domain.Transfer{
 		ID:                     IDGeneratorTransaction(),
@@ -88,7 +89,18 @@ func TransferringUnique(d domain.Transfer) (string, bool) { // rota deve ser put
 		Created_at_:            time.Now(),
 	}
 
-	str, ret := Transaction(Transf.Account_origin_id, Transf.Account_destination_id, Transf.Amount)
-	return str, ret
+	ret := Transaction(Transf.Account_origin_id, Transf.Account_destination_id, Transf.Amount)
+	if ret != nil {
+		return errors.New("invalid operation")
+	}
+	DataTran = append(DataTran, Transf)
+	return ret
+
+}
+func Transfers() error {
+	if len(DataTran) == 0 {
+		return errors.New("there are no transactions to show")
+	}
+	return nil
 
 }

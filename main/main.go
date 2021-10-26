@@ -1,9 +1,12 @@
 package main
 
-import "exemple.com/DesafioStone/desafio_stone/http"
+import (
+	"exemple.com/DesafioStone/desafio_stone/domain/usecases"
+	"exemple.com/DesafioStone/desafio_stone/http"
+)
 
 func main() {
-
+	usecases.Dadosfake()
 	http.ConfiguringServer()
 
 }
