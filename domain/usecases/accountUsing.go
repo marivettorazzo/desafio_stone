@@ -34,18 +34,18 @@ func IDGeneratorAcc() int { //account type method that generates a non-repeating
 func ValidatorAccount(nome string, cpf int) error {
 
 	if len(nome) == 0 {
-		return errors.New("invalid operation")
+		return errors.New("invalid name")
 	}
 
 	for i := 0; i < len(DataAcc); i++ {
 
 		if cpf == DataAcc[i].Cpf {
 
-			return errors.New("invalid operation")
+			return errors.New("invalid cpf")
 		}
 		if len(strconv.Itoa(cpf)) < 11 {
 
-			return errors.New("invalid operation")
+			return errors.New("invalid cpf")
 		}
 	}
 	return nil
@@ -56,7 +56,7 @@ func InsertLieDatabase(d domain.Account) error { //function that enters account 
 	ret := ValidatorAccount(d.Name, d.Cpf)
 	if ret != nil {
 
-		return errors.New("invalid operation")
+		return errors.New(ret.Error())
 
 	}
 	accountUnique := domain.Account{

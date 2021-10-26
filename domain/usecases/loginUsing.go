@@ -19,7 +19,7 @@ func ValidaLogin(l domain.Login) (domain.Account, error) {
 
 	}
 
-	return domain.Account{}, errors.New("Access denied")
+	return domain.Account{}, errors.New("access denied")
 }
 func insertLogin(cpf int, secret string) error {
 

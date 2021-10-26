@@ -52,11 +52,11 @@ func Transaction(ori int, dest int, Amount float64) error {
 	var ret error
 	ret = CaptureId(ori)
 	if ret != nil {
-		return errors.New("invalid id")
+		return errors.New(ret.Error())
 	}
 	ret = CaptureId(dest)
 	if ret != nil {
-		return errors.New("invalid id")
+		return errors.New(ret.Error())
 	}
 	if ori == dest {
 
@@ -67,7 +67,7 @@ func Transaction(ori int, dest int, Amount float64) error {
 		if DataAcc[i].ID == ori {
 			resp := Validator(DataAcc[i].Balance, Amount)
 			if resp != nil {
-				return resp
+				return errors.New(resp.Error())
 			}
 			DataAcc[i].Balance -= Amount
 		}
@@ -91,7 +91,7 @@ func TransferringUnique(d domain.Transfer) error { // rota deve ser put
 
 	ret := Transaction(Transf.Account_origin_id, Transf.Account_destination_id, Transf.Amount)
 	if ret != nil {
-		return errors.New("invalid operation")
+		return errors.New(ret.Error())
 	}
 	DataTran = append(DataTran, Transf)
 	return ret
