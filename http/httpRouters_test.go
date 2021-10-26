@@ -5,42 +5,6 @@ import (
 	"testing"
 )
 
-func Test_testeRoute(t *testing.T) {
-	type args struct {
-		w http.ResponseWriter
-		r *http.Request
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			testeRoute(tt.args.w, tt.args.r)
-		})
-	}
-}
-
-func Test_showAccountsBalance(t *testing.T) {
-	type args struct {
-		w http.ResponseWriter
-		r *http.Request
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			showAccountsBalance(tt.args.w, tt.args.r)
-		})
-	}
-}
-
 func TestCreateAccount(t *testing.T) {
 	type args struct {
 		w http.ResponseWriter
@@ -50,7 +14,13 @@ func TestCreateAccount(t *testing.T) {
 		name string
 		args args
 	}{
-		// TODO: Add test cases.
+		{
+			name: "teste1",
+			args: args{
+				w: nil,
+				r: &http.Request{},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
