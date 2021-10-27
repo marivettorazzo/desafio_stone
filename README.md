@@ -173,3 +173,10 @@ ok      exemple.com/DesafioStone/desafio_stone/domain/usecases  0.068s
 
 
 
+
+
+
+
+
+
+
