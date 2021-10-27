@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"exemple.com/DesafioStone/desafio_stone/domain"
 	"exemple.com/DesafioStone/desafio_stone/domain/usecases"
@@ -19,21 +18,20 @@ func testeRoute(w http.ResponseWriter, r *http.Request) {
 
 func showAccountsBalance(w http.ResponseWriter, r *http.Request) { //function that returns the balance looking for the id via the url
 	w.Header().Set("Content-Type", "aplication/json") // get the response variable (w) set the type of the http header value to app/json
-	params := mux.Vars(r)                             // Shows account balance with id specified in route
+	params := mux.Vars(r)
+	// Shows account balance with id specified in route
 
-	for _, item := range usecases.DataAcc {
-		id := strconv.Itoa(item.ID)
-		if id == params["account_id"] { //makes a range traversing the dataset passed in the slice comparing if item is equal id passed in route
+	z, x, err := usecases.GetBalance(params["account_id"])
 
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(item.Balance)
-
-			return
-		}
-		response := " 404 Not found"
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(response)
+		json.NewEncoder(w).Encode(err.Error())
+		return
 	}
+	y := int(x)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(z)
+	json.NewEncoder(w).Encode(y)
 
 }
 

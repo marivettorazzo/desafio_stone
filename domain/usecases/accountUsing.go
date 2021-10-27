@@ -80,3 +80,18 @@ func Accounts() error {
 	return nil
 
 }
+func GetBalance(id string) (string, float64, error) {
+	var y float64
+	for i := 0; i < len(DataAcc); i++ {
+
+		x, _ := strconv.Atoi(id)
+		if x == DataAcc[i].ID { //makes a range traversing the dataset passed in the slice comparing if item is equal id passed in route
+			y = DataAcc[i].Balance
+			response := "Balance :"
+			return response, y, nil
+		}
+	}
+	response := ""
+	return response, y, errors.New("id not found")
+
+}
