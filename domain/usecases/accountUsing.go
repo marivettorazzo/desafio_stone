@@ -87,7 +87,7 @@ func GetBalance(id string) (string, float64, error) {
 		x, _ := strconv.Atoi(id)
 		if x == DataAcc[i].ID { //makes a range traversing the dataset passed in the slice comparing if item is equal id passed in route
 			y = DataAcc[i].Balance
-			response := "Balance :"
+			response := "Balance"
 			return response, y, nil
 		}
 	}
